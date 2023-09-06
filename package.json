@@ -1,0 +1,18 @@
+{
+  "name": "stack-tavern-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "pnpx tailwindcss -i ./style/input.css -o ./style/output.css",
+    "watch": "pnpx tailwindcss -i ./style/input.css -o ./style/output.css --watch",
+    "format-css": "pnpx rustywind  --write ./src"
+  },
+  "keywords": [],
+  "author": "AsgrimS",
+  "license": "ISC",
+  "devDependencies": {
+    "rustywind": "^0.19.0",
+    "tailwindcss": "^3.3.3"
+  }
+}

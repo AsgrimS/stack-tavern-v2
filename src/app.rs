@@ -8,9 +8,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
 
-    view! {
-        cx,
-
+    view! { cx,
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/pkg/stack-tavern-v2.css"/>
@@ -22,10 +20,7 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Router fallback=|cx| {
             let mut outside_errors = Errors::default();
             outside_errors.insert_with_default_key(AppError::NotFound);
-            view! { cx,
-                <ErrorTemplate outside_errors/>
-            }
-            .into_view(cx)
+            view! { cx, <ErrorTemplate outside_errors/> }.into_view(cx)
         }>
             <main>
                 <Routes>
@@ -41,10 +36,29 @@ pub fn App(cx: Scope) -> impl IntoView {
 fn HomePage(cx: Scope) -> impl IntoView {
     // Creates a reactive value to update the button
     let (count, set_count) = create_signal(cx, 0);
-    let on_click = move |_| set_count.update(|count| *count += 1);
 
     view! { cx,
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
+        <Title text="Leptos + Tailwindcss"/>
+        <main>
+            <div class="flex flex-col min-h-screen font-mono text-white bg-gradient-to-tl from-blue-800 to-blue-500">
+                <div class="flex flex-row-reverse flex-wrap m-auto">
+                    <button
+                        on:click=move |_| set_count.update(|value| *value += 1)
+                        class="py-2 px-3 m-1 text-white bg-blue-700 rounded border-l-2 border-b-4 border-blue-800 shadow-lg"
+                    >
+                        "+"
+                    </button>
+                    <button class="py-2 px-3 m-1 text-white bg-blue-800 rounded border-l-2 border-b-4 border-blue-900 shadow-lg">
+                        {count}
+                    </button>
+                    <button
+                        on:click=move |_| set_count.update(|value| *value -= 1)
+                        class="py-2 px-3 m-1 text-white bg-blue-700 rounded border-l-2 border-b-4 border-blue-800 shadow-lg"
+                    >
+                        "-"
+                    </button>
+                </div>
+            </div>
+        </main>
     }
 }
