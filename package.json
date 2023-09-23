@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm tailwindcss -i ./style/input.css -o ./style/output.css",
+    "build": "pnpm dlx tailwindcss -i ./style/input.css -o ./style/output.css",
     "watch": "pnpm tailwindcss -i ./style/input.css -o ./style/output.css --watch",
     "format-css": "pnpm rustywind  --write ./src",
     "check-css": "pnpm rustywind --check-formatted ./src",
