@@ -1,5 +1,5 @@
 # Get started with a build env with Rust nightly
-FROM rustlang/rust:nightly-alpine as builder
+FROM rustlang/rust:nightly-alpine3.17 as builder
 
 RUN apk update && \
   apk upgrade --no-cache && \
@@ -25,7 +25,7 @@ COPY . .
 # Build the app
 RUN cargo leptos build --release -vv
 
-FROM rustlang/rust:nightly-alpine as runner
+FROM rustlang/rust:nightly-alpine3.17 as runner
 # Copy the server binary to the /app directory
 COPY --from=builder /app/target/server/release/stack-tavern-v2 /app/
 # /target/site contains our JS/WASM/CSS, etc.
