@@ -17,3 +17,9 @@ services:
       POSTGRES_DB: stack_tavern
     volumes:
       - ./db:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080

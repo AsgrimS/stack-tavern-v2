@@ -1,6 +1,7 @@
 use cfg_if::cfg_if;
 pub mod app;
 pub mod components;
+pub mod db;
 pub mod error_template;
 pub mod fileserv;
 pub mod pages;
