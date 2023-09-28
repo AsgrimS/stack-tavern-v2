@@ -1,8 +1,8 @@
 use leptos::*;
 
 #[component]
-pub fn Navbar(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn Navbar() -> impl IntoView {
+    view! {
         <div class="navbar bg-base-100">
             <div class="flex-1">
                 <a href="/" class="text-xl normal-case btn btn-ghost">

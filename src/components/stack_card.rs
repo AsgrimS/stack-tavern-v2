@@ -1,8 +1,8 @@
 use leptos::*;
 
 #[component]
-pub fn StackCard(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn StackCard() -> impl IntoView {
+    view! {
         <div class="w-96 card bg-neutral text-neutral-content">
             <div class="card-body">
                 <h2 class="card-title">

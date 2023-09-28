@@ -19,27 +19,27 @@ pub async fn get_stacks() -> Result<Vec<TechnologyDto>, ServerFnError> {
 
 /// Renders the home page of your application.
 #[component]
-pub fn HomePage(cx: Scope) -> impl IntoView {
-    let technologies = create_resource(cx, || (), |_| async move { get_stacks().await });
+pub fn HomePage() -> impl IntoView {
+    let technologies = create_resource(|| (), |_| async move { get_stacks().await });
 
-    view! { cx,
+    view! {
         <main>
             <Navbar/>
             <Suspense fallback=move || {
-                view! { cx, <p>"Loading..."</p> }
+                view! { <p>"Loading..."</p> }
             }>
                 {move || {
                     technologies
-                        .read(cx)
+                        .get()
                         .map(|response| match response {
-                            Err(_) => view! { cx, <p>"Error"</p> }.into_view(cx),
+                            Err(_) => view! { <p>"Error"</p> }.into_view(),
                             Ok(technologies) => {
                                 technologies
                                     .into_iter()
-                                    .map(move |t| {
-                                        view! { cx, <StackCard/> }
+                                    .map(move |_t| {
+                                        view! { <StackCard/> }
                                     })
-                                    .collect_view(cx)
+                                    .collect_view()
                             }
                         })
                 }}
