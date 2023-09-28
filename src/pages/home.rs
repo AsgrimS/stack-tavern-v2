@@ -7,7 +7,6 @@ pub async fn get_stacks() -> Result<Vec<TechnologyDto>, ServerFnError> {
     use crate::db::get_connection_pool;
     use crate::models::technology::Technology;
     let pool = get_connection_pool().await;
-    std::thread::sleep(std::time::Duration::from_secs(1));
 
     match sqlx::query_as!(Technology, "SELECT * FROM technologies")
         .fetch_all(pool)
@@ -28,10 +27,23 @@ pub fn HomePage(cx: Scope) -> impl IntoView {
             <Navbar/>
             <Suspense fallback=move || {
                 view! { cx, <p>"Loading..."</p> }
-                }>{move || { technologies.read(cx).map(|response| match response{
-                    Err(_) => { view! {cx, <p>"Error"</p>}.into_view(cx)},
-                    Ok(technologies) => technologies.into_iter().map(move |t| {view! {cx, <StackCard/>}}).collect_view(cx),
-                }) }}
+            }>
+                {move || {
+                    technologies
+                        .read(cx)
+                        .map(|response| match response {
+                            Err(_) => view! { cx, <p>"Error"</p> }.into_view(cx),
+                            Ok(technologies) => {
+                                technologies
+                                    .into_iter()
+                                    .map(move |t| {
+                                        view! { cx, <StackCard/> }
+                                    })
+                                    .collect_view(cx)
+                            }
+                        })
+                }}
+
             </Suspense>
         </main>
     }
