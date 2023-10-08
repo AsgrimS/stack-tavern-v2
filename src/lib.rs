@@ -7,9 +7,13 @@ pub mod fileserv;
 pub mod pages;
 
 #[cfg(feature = "ssr")]
+pub mod auth;
+#[cfg(feature = "ssr")]
 pub mod db;
 #[cfg(feature = "ssr")]
 pub mod models;
+#[cfg(feature = "ssr")]
+pub mod state;
 
 cfg_if! { if #[cfg(feature = "hydrate")] {
     use leptos::*;

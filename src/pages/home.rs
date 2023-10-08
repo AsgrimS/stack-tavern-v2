@@ -4,12 +4,13 @@ use leptos::*;
 
 #[server(GetStacks, "/api")]
 pub async fn get_stacks() -> Result<Vec<TechnologyDto>, ServerFnError> {
-    use crate::db::get_connection_pool;
     use crate::models::technology::Technology;
-    let pool = get_connection_pool().await;
+    use crate::state::pool;
+
+    let pool = pool().await?;
 
     match sqlx::query_as!(Technology, "SELECT * FROM technologies")
-        .fetch_all(pool)
+        .fetch_all(&pool)
         .await
     {
         Ok(technologies) => Ok(technologies.into_iter().map(|t| t.into()).collect()),
