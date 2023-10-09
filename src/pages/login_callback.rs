@@ -1,7 +1,10 @@
 use crate::components::navbar::Navbar;
+use gloo_storage::{LocalStorage, Storage};
 use leptos::*;
 use leptos_router::*;
 use log::debug;
+
+const ACCESS_TOKEN_STORAGE_KEY: &str = "access_token";
 
 #[server(Login, "/api")]
 pub async fn login(code: String) -> Result<Option<String>, ServerFnError> {
@@ -39,6 +42,15 @@ pub fn LoginCallbackPage() -> impl IntoView {
         }
     });
 
+    create_effect(move |_| {
+        let token = token.get().unwrap();
+
+        if let Ok(Some(token)) = token {
+            LocalStorage::set(ACCESS_TOKEN_STORAGE_KEY, token).expect("LocalStorage::set");
+            navigate("/yay", Default::default());
+        };
+    });
+
     view! {
         <main>
             <Navbar/>
@@ -46,10 +58,8 @@ pub fn LoginCallbackPage() -> impl IntoView {
                 None => view! { <p>"Loading..."</p> }.into_view(),
                 Some(token) => {
                     let Ok(token) = token else { return view! { <p>"Error"</p> }.into_view() };
-                    let Some(token) = token else { return view! { <Redirect path="/"/> }.into_view()
-                };
-                    debug!("{:?}", token);
-                    view! { <Redirect path="/success"/> }.into_view()
+                    let Some(_) = token else { return view! { <Redirect path="/"/> }.into_view() };
+                    view! { <p>"Success!"</p> }.into_view()
                 }
             }}
 
