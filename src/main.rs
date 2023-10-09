@@ -1,18 +1,17 @@
 use cfg_if::cfg_if;
-
 cfg_if! { if #[cfg(feature = "ssr")] {
     use axum::{
         response::{Response, IntoResponse},
         routing::get,
         extract::{Path, State, RawQuery},
-        http::{Request, header::HeaderMap},
+        http::{Request, header::HeaderMap },
         body::Body as AxumBody,
         Router,
+        middleware
     };
     use dotenv::dotenv;
     use leptos::*;
     use stack_tavern_v2::app::*;
-    use stack_tavern_v2::auth::initialize_introspect_state;
     use stack_tavern_v2::db::initialize_pool;
     use stack_tavern_v2::fileserv::file_and_error_handler;
     use stack_tavern_v2::state::AppState;
@@ -63,10 +62,11 @@ cfg_if! { if #[cfg(feature = "ssr")] {
 
        // build our application with a route
        let app = Router::new()
-           .route("/api/*fn_name", get(server_fn_handler).post(server_fn_handler))
-           .leptos_routes_with_handler(routes, get(leptos_routes_handler))
-           .fallback(file_and_error_handler)
-           .with_state(app_state);
+            .route("/api/*fn_name", get(server_fn_handler).post(server_fn_handler))
+            .leptos_routes_with_handler(routes, get(leptos_routes_handler))
+            .fallback(file_and_error_handler)
+            // .route_layer(middleware::from_fn(require_token))
+            .with_state(app_state);
 
        // run our app with hyper
        // `axum::Server` is a re-export of `hyper::Server`

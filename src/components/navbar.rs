@@ -1,5 +1,13 @@
 use leptos::*;
 
+#[server(GetLoginUrl, "/api")]
+pub async fn get_login_url() -> Result<String, ServerFnError> {
+    use crate::auth::get_authorization_url;
+
+    let url = get_authorization_url().await;
+    Ok(url)
+}
+
 #[component]
 pub fn Navbar() -> impl IntoView {
     view! {
@@ -33,6 +41,16 @@ pub fn Navbar() -> impl IntoView {
                         <li>
                             <a>
                                 Logout
+                            </a>
+                        </li>
+                        <li>
+                            <a on:click=move |_| {
+                                spawn_local(async {
+                                    let url = get_login_url().await.unwrap();
+                                    window().location().set_href(url.as_str()).unwrap();
+                                });
+                            }>
+                                Login
                             </a>
                         </li>
                     </ul>

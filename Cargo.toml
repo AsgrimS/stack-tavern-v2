@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-axum = { version = "0.6.4", optional = true }
+axum = { version = "0.6.4", optional = true, features = ["headers"] }
 console_error_panic_hook = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 console_log = "1"
@@ -35,19 +35,19 @@ tracing = { version = "0.1.37", optional = true }
 http = "0.2.8"
 dotenv = "0.15.0"
 time = { version = "0.3", features = ["serde"] }
-zitadel = { version = "3.4.25", features = ["axum"], optional = true }
+oauth2 = { version = "4.4.2", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = [
     "dep:axum",
     "dep:leptos_axum",
+    "dep:oauth2",
     "dep:sqlx",
     "dep:tokio",
     "dep:tower",
     "dep:tower-http",
     "dep:tracing",
-    "dep:zitadel",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
