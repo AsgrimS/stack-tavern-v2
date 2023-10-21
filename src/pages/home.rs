@@ -4,11 +4,10 @@ use leptos::*;
 
 #[server(GetStacks, "/api")]
 pub async fn get_stacks() -> Result<Vec<TechnologyDto>, ServerFnError> {
-    use crate::api::models::common::GetAll;
-    use crate::api::models::technology::Technology;
+    use crate::api::queries::technology::get_technologies;
 
-    match Technology::get_all().await {
-        Ok(technologies) => Ok(technologies.into_iter().map(|t| t.into()).collect()),
+    match get_technologies().await {
+        Ok(technologies) => Ok(technologies),
         Err(e) => Err(ServerFnError::ServerError(e.to_string())),
     }
 }
