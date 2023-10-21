@@ -1,18 +1,13 @@
 use crate::components::{navbar::Navbar, stack_card::StackCard};
-use crate::dto::technology::TechnologyDto;
+use crate::shared::dto::technology::TechnologyDto;
 use leptos::*;
 
 #[server(GetStacks, "/api")]
 pub async fn get_stacks() -> Result<Vec<TechnologyDto>, ServerFnError> {
-    use crate::models::technology::Technology;
-    use crate::state::pool;
+    use crate::api::models::common::GetAll;
+    use crate::api::models::technology::Technology;
 
-    let pool = pool().await?;
-
-    match sqlx::query_as!(Technology, "SELECT * FROM technologies")
-        .fetch_all(&pool)
-        .await
-    {
+    match Technology::get_all().await {
         Ok(technologies) => Ok(technologies.into_iter().map(|t| t.into()).collect()),
         Err(e) => Err(ServerFnError::ServerError(e.to_string())),
     }

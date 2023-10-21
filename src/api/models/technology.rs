@@ -1,7 +1,10 @@
 use sqlx::FromRow;
 use time::OffsetDateTime;
 
-use crate::dto::technology::TechnologyDto;
+use crate::shared::dto::technology::TechnologyDto;
+
+use super::common::{Get, GetAll};
+use super::STModel;
 
 #[derive(FromRow)]
 pub struct Technology {
@@ -12,6 +15,13 @@ pub struct Technology {
     pub created_at: OffsetDateTime,
 }
 
+impl STModel for Technology {
+    const TABLE_NAME: &'static str = "technologies";
+}
+
+impl Get for Technology {}
+impl GetAll for Technology {}
+
 impl From<Technology> for TechnologyDto {
     fn from(val: Technology) -> Self {
         TechnologyDto {
@@ -21,5 +31,11 @@ impl From<Technology> for TechnologyDto {
             purpose: val.purpose,
             created_at: val.created_at,
         }
+    }
+}
+
+impl From<Box<Technology>> for TechnologyDto {
+    fn from(val: Box<Technology>) -> Self {
+        (*val).into()
     }
 }

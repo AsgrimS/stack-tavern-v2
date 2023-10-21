@@ -2,13 +2,12 @@ use crate::components::navbar::Navbar;
 use gloo_storage::{LocalStorage, Storage};
 use leptos::*;
 use leptos_router::*;
-use log::debug;
 
 const ACCESS_TOKEN_STORAGE_KEY: &str = "access_token";
 
 #[server(Login, "/api")]
 pub async fn login(code: String) -> Result<Option<String>, ServerFnError> {
-    use crate::auth::get_token;
+    use crate::api::auth::get_token;
 
     let token = get_token(code).await;
 

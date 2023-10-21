@@ -1,19 +1,13 @@
 use cfg_if::cfg_if;
 pub mod app;
 pub mod components;
-pub mod dto;
 pub mod error_template;
 pub mod fileserv;
 pub mod pages;
+pub mod shared;
 
 #[cfg(feature = "ssr")]
-pub mod auth;
-#[cfg(feature = "ssr")]
-pub mod db;
-#[cfg(feature = "ssr")]
-pub mod models;
-#[cfg(feature = "ssr")]
-pub mod state;
+pub mod api;
 
 cfg_if! { if #[cfg(feature = "hydrate")] {
     use leptos::*;

@@ -1,18 +1,10 @@
 use std::env;
 
-// use axum::{
-//     headers::{authorization::Bearer, Authorization},
-//     http::{Request, StatusCode},
-//     middleware::Next,
-//     response::Response,
-//     TypedHeader,
-// };
-use log::debug;
 use oauth2::basic::BasicClient;
 use oauth2::reqwest::async_http_client;
 use oauth2::{
-    AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, PkceCodeChallenge, RedirectUrl,
-    Scope, TokenResponse, TokenUrl,
+    AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, RedirectUrl, Scope,
+    TokenResponse, TokenUrl,
 };
 // use sqlx::types::Uuid;
 use tokio::sync::OnceCell;
@@ -69,47 +61,3 @@ pub async fn get_token(code: String) -> Option<String> {
 
     Some(token.access_token().secret().clone())
 }
-
-// async fn verify_token(token: &str) -> Option<Uuid> {
-//     let token = AccessToken::new(token.to_string());
-//
-//     let client = get_openid_client().await;
-//
-//     let introspec_request = client.introspect(&token).unwrap();
-//     let introspect = introspec_request
-//         .request_async(async_http_client)
-//         .await
-//         .unwrap();
-//
-//     if !introspect.active() {
-//         return None;
-//     };
-//
-//     let (Some(sub), Some(name)) = (introspect.sub(), introspect.username()) else {
-//         return None;
-//     };
-//
-//     let Ok(user_uuid) = Uuid::try_parse(sub) else {
-//         return None;
-//     };
-//
-//     // if (User::get_by_uuid(&user_uuid).await).is_err() {
-//     //     User::create(name, &user_uuid).await.ok();
-//     // };
-//
-//     Some(user_uuid)
-// }
-
-// pub async fn require_token<B>(
-//     TypedHeader(auth): TypedHeader<Authorization<Bearer>>,
-//     mut request: Request<B>,
-//     next: Next<B>,
-// ) -> Result<Response, StatusCode> {
-//     let Some(user_uuid) = verify_token(auth.token()).await else {
-//         return Err(StatusCode::UNAUTHORIZED);
-//     };
-//
-//     request.extensions_mut().insert(user_uuid);
-//
-//     Ok(next.run(request).await)
-// }

@@ -1,3 +1,6 @@
+run:
+	cargo leptos watch
+
 format:
 	pnpm format-css && cargo fmt --all
 
