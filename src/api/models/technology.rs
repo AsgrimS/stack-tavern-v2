@@ -3,7 +3,7 @@ use time::OffsetDateTime;
 
 use crate::shared::dto::technology::TechnologyDto;
 
-use super::common::{Get, GetAll};
+use super::common::{Delete, Get, GetAll};
 use super::STModel;
 
 #[derive(FromRow)]
@@ -21,6 +21,7 @@ impl STModel for Technology {
 
 impl Get for Technology {}
 impl GetAll for Technology {}
+impl Delete for Technology {}
 
 impl From<Technology> for TechnologyDto {
     fn from(val: Technology) -> Self {

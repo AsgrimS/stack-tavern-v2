@@ -30,6 +30,23 @@ pub trait GetAll {
         let pool = get_connection_pool().await;
         let query = format!("SELECT * FROM {}", Self::TABLE_NAME);
         let items: Vec<Self> = sqlx::query_as(query.as_str()).fetch_all(pool).await?;
+
         Ok(items.into_iter().map(|i| Box::new(i)).collect())
+    }
+}
+
+#[async_trait]
+pub trait Delete {
+    /// Deletes an item from the database by id.
+    /// Returns a Result with the number of affected rows or sqlx::Error.
+    async fn delete(id: &i32) -> Result<u64, Error>
+    where
+        Self: STModel,
+    {
+        let pool = get_connection_pool().await;
+        let query = format!("DELETE FROM {} WHERE id = {}", Self::TABLE_NAME, id);
+        let rows = sqlx::query(query.as_str()).execute(pool).await?;
+
+        Ok(rows.rows_affected())
     }
 }
