@@ -1,20 +1,38 @@
 use crate::components::navbar::Navbar;
-use gloo_storage::{LocalStorage, Storage};
 use leptos::*;
 use leptos_router::*;
 
-const ACCESS_TOKEN_STORAGE_KEY: &str = "access_token";
+const ACCESS_TOKEN_COOKIE: &str = "access_token";
 
 #[server(Login, "/api")]
-pub async fn login(code: String) -> Result<Option<String>, ServerFnError> {
+pub async fn login(code: String) -> Result<bool, ServerFnError> {
     use crate::api::auth::get_token;
+    use axum::http::header;
+    use cookie::Cookie;
+    use leptos_axum::ResponseOptions;
 
     let token = get_token(code).await;
+    let response = expect_context::<ResponseOptions>();
 
-    Ok(token)
+    if let Some(token) = token {
+        let cookie = Cookie::build((ACCESS_TOKEN_COOKIE, token))
+            .path("/")
+            .secure(true)
+            .http_only(true)
+            .to_string();
+
+        response.insert_header(
+            header::SET_COOKIE,
+            header::HeaderValue::from_str(cookie.as_str()).unwrap(),
+        );
+
+        return Ok(true);
+    }
+
+    Ok(false)
 }
 
-#[derive(Params, PartialEq, Clone)]
+#[derive(Params, PartialEq)]
 struct LoginCallbackQueryParams {
     code: String,
 }
@@ -23,29 +41,29 @@ struct LoginCallbackQueryParams {
 #[component]
 pub fn LoginCallbackPage() -> impl IntoView {
     let navigate = use_navigate();
-    let query = use_query::<LoginCallbackQueryParams>();
-    let (code, set_code) = create_signal("".to_string());
+    let query = use_query_map();
 
-    let token = create_resource(
-        code,
-        // every time `count` changes, this will run
-        |code| async move { login(code).await },
-    );
+    let code = move || {
+        query
+            .with(|q| q.get("code").and_then(|code| code.parse::<String>().ok()))
+            .unwrap()
+    };
 
-    query.with_untracked(|query| match query {
-        Ok(query) => {
-            set_code(query.code.clone());
-        }
-        Err(_) => {
-            navigate("/", Default::default());
-        }
+    let login = create_action(|input: &String| {
+        let input = input.clone();
+        async move { login(input).await }
+    });
+    let logged_in = login.value();
+
+    create_effect(move |_| {
+        let code = code();
+        login.dispatch(code);
     });
 
     create_effect(move |_| {
-        let token = token.get().unwrap();
+        let logged_in = logged_in();
 
-        if let Ok(Some(token)) = token {
-            LocalStorage::set(ACCESS_TOKEN_STORAGE_KEY, token).expect("LocalStorage::set");
+        if let Some(Ok(true)) = logged_in {
             navigate("/yay", Default::default());
         };
     });
@@ -53,15 +71,6 @@ pub fn LoginCallbackPage() -> impl IntoView {
     view! {
         <main>
             <Navbar/>
-            {move || match token.get() {
-                None => view! { <p>"Loading..."</p> }.into_view(),
-                Some(token) => {
-                    let Ok(token) = token else { return view! { <p>"Error"</p> }.into_view() };
-                    let Some(_) = token else { return view! { <Redirect path="/"/> }.into_view() };
-                    view! { <p>"Success!"</p> }.into_view()
-                }
-            }}
-
         </main>
     }
 }
