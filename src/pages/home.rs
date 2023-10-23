@@ -40,6 +40,12 @@ pub fn HomePage() -> impl IntoView {
                 }}
 
             </Suspense>
+            <button on:click=move |_| {
+                spawn_local(async {
+                    get_stacks().await;
+                });
+            }>"Click"</button>
+
         </main>
     }
 }

@@ -1,10 +1,12 @@
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
+    use axum::middleware;
     use axum::{routing::post, Router};
     use dotenv::dotenv;
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
+    use stack_tavern_v2::api::auth::require_token;
     use stack_tavern_v2::app::*;
     use stack_tavern_v2::fileserv::file_and_error_handler;
 
@@ -18,6 +20,8 @@ async fn main() {
 
     let app = Router::new()
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
+        .route_layer(middleware::from_fn(require_token))
+        .route("/api/auth/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(&leptos_options, routes, App)
         .fallback(file_and_error_handler)
         .with_state(leptos_options);

@@ -6,7 +6,14 @@ use oauth2::{
     AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, RedirectUrl, Scope,
     TokenResponse, TokenUrl,
 };
-// use sqlx::types::Uuid;
+
+use axum::{
+    headers::Cookie,
+    http::{Request, StatusCode},
+    middleware::Next,
+    response::Response,
+    TypedHeader,
+};
 use tokio::sync::OnceCell;
 
 async fn initalize_oauth_client() -> BasicClient {
@@ -60,4 +67,27 @@ pub async fn get_token(code: String) -> Option<String> {
     };
 
     Some(token.access_token().secret().clone())
+}
+
+pub async fn require_token<B>(
+    TypedHeader(cookie): TypedHeader<Cookie>,
+    mut request: Request<B>,
+    next: Next<B>,
+) -> Result<Response, StatusCode> {
+    log::warn!("-------------");
+    let Some(access_token) = cookie.get("access_token") else {
+        return Err(StatusCode::UNAUTHORIZED);
+    };
+
+    // let Some(user_uuid) = verify_token(auth.token()).await else {
+    //     return Err(StatusCode::UNAUTHORIZED);
+    // };
+    //
+    // request.extensions_mut().insert(user_uuid);
+
+    log::warn!("-------------");
+    log::warn!("{:?}", access_token);
+    log::warn!("-------------");
+
+    Ok(next.run(request).await)
 }

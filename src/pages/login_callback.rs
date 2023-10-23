@@ -4,7 +4,7 @@ use leptos_router::*;
 
 const ACCESS_TOKEN_COOKIE: &str = "access_token";
 
-#[server(Login, "/api")]
+#[server(Login, "/api/auth")]
 pub async fn login(code: String) -> Result<bool, ServerFnError> {
     use crate::api::auth::get_token;
     use axum::http::header;

@@ -1,6 +1,6 @@
 use leptos::*;
 
-#[server(GetLoginUrl, "/api")]
+#[server(GetLoginUrl, "/api/auth")]
 pub async fn get_login_url() -> Result<String, ServerFnError> {
     use crate::api::auth::get_authorization_url;
 
