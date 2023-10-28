@@ -2,7 +2,7 @@ use crate::components::{navbar::Navbar, stack_card::StackCard};
 use crate::shared::dto::technology::TechnologyDto;
 use leptos::*;
 
-#[server(GetStacks, "/api")]
+#[server(GetStacks, "/api/public")]
 pub async fn get_stacks() -> Result<Vec<TechnologyDto>, ServerFnError> {
     use crate::api::queries::technology::get_technologies;
 
@@ -40,12 +40,6 @@ pub fn HomePage() -> impl IntoView {
                 }}
 
             </Suspense>
-            <button on:click=move |_| {
-                spawn_local(async {
-                    get_stacks().await;
-                });
-            }>"Click"</button>
-
         </main>
     }
 }

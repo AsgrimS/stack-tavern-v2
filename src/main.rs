@@ -21,7 +21,7 @@ async fn main() {
     let app = Router::new()
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
         .route_layer(middleware::from_fn(require_token))
-        .route("/api/auth/*fn_name", post(leptos_axum::handle_server_fns))
+        .route("/api/public/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(&leptos_options, routes, App)
         .fallback(file_and_error_handler)
         .with_state(leptos_options);

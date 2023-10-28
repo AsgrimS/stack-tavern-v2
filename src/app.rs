@@ -12,8 +12,10 @@ pub fn App() -> impl IntoView {
 
     view! {
         <Stylesheet id="leptos" href="/pkg/stack-tavern-v2.css"/>
-        <Stylesheet href="https://cdn.jsdelivr.net/npm/daisyui@2.6.0/dist/full.css"/>
-        <Html attr:data-theme="night"/>
+
+        // DaisyUI
+        <Stylesheet href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css"/>
+        <Script src="https://cdn.tailwindcss.com"/>
 
         // sets the document title
         <Title text="Welcome to Leptos"/>
@@ -25,6 +27,8 @@ pub fn App() -> impl IntoView {
             view! { <ErrorTemplate outside_errors/> }.into_view()
         }>
             <main>
+                <Html attr:data-theme="night"/>
+                <Body class="min-h-screen"/>
                 <Routes>
                     <Route path="/" view=HomePage/>
                     <Route path="/login/callback" view=LoginCallbackPage/>

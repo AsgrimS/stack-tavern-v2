@@ -2,9 +2,11 @@ use crate::components::navbar::Navbar;
 use leptos::*;
 use leptos_router::*;
 
+use crate::shared::functions::public::get_login_url;
+
 const ACCESS_TOKEN_COOKIE: &str = "access_token";
 
-#[server(Login, "/api/auth")]
+#[server(Login, "/api/public")]
 pub async fn login(code: String) -> Result<bool, ServerFnError> {
     use crate::api::auth::get_token;
     use axum::http::header;
@@ -64,13 +66,26 @@ pub fn LoginCallbackPage() -> impl IntoView {
         let logged_in = logged_in();
 
         if let Some(Ok(true)) = logged_in {
-            navigate("/yay", Default::default());
-        };
+            navigate("/", Default::default());
+        }
+
+        if let Some(Ok(false)) = logged_in {
+            spawn_local(async {
+                let url = get_login_url().await.unwrap();
+                window().location().set_href(url.as_str()).unwrap();
+            });
+        }
     });
 
     view! {
         <main>
             <Navbar/>
+            <div class="mx-auto mt-[15%] w-80 card bg-neutral text-neutral-content">
+                <div class="items-center text-center card-body">
+                    <h2 class="card-title">"Logging in"</h2>
+                    <span class="loading loading-dots loading-lg"></span>
+                </div>
+            </div>
         </main>
     }
 }
