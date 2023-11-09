@@ -4,11 +4,10 @@ use leptos_router::*;
 
 use crate::shared::functions::public::get_login_url;
 
-const ACCESS_TOKEN_COOKIE: &str = "access_token";
-
 #[server(Login, "/api/public")]
 pub async fn login(code: String) -> Result<bool, ServerFnError> {
     use crate::api::auth::get_token;
+    use crate::shared::consts::ACCESS_TOKEN_COOKIE;
     use axum::http::header;
     use cookie::Cookie;
     use leptos_axum::ResponseOptions;
@@ -42,7 +41,6 @@ struct LoginCallbackQueryParams {
 /// Renders the home page of your application.
 #[component]
 pub fn LoginCallbackPage() -> impl IntoView {
-    let navigate = use_navigate();
     let query = use_query_map();
 
     let code = move || {
@@ -66,7 +64,7 @@ pub fn LoginCallbackPage() -> impl IntoView {
         let logged_in = logged_in();
 
         if let Some(Ok(true)) = logged_in {
-            navigate("/", Default::default());
+            window().location().set_href("/").unwrap();
         }
 
         if let Some(Ok(false)) = logged_in {
