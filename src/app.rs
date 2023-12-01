@@ -14,7 +14,7 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/stack-tavern-v2.css"/>
 
         // DaisyUI
-        <Stylesheet href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css"/>
+        <Stylesheet href="https://cdn.jsdelivr.net/npm/daisyui@4.4.17/dist/full.min.css"/>
         <Script src="https://cdn.tailwindcss.com"/>
 
         // sets the document title
